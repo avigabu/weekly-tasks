@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המשימות השבועיות שלי</title>
+    <!-- App Icons / PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- מאגר משימות צדדי -->
+        <aside class="backlog-container">
+            <div class="backlog-header">
+                <h2>משימות לשיבוץ</h2>
+                <p>כאן ממתינות משימות משבועות קודמים שלא סיימת.</p>
+            </div>
+            
+            <form class="add-task-form backlog-form" id="backlogForm">
+                <input type="text" id="backlogInput" placeholder="הוסיפו משימה למאגר..." required>
+                <button type="submit" class="btn-primary" aria-label="הוסף למאגר">+</button>
+            </form>
+
+            <ul class="task-list backlog-list" id="backlogList">
+                <!-- משימות מהמאגר ירונדרו כאן -->
+            </ul>
+        </aside>
+
+        <!-- אזור השבועות (Main) -->
+        <main class="weeks-container">
+            <header class="main-header">
+                <div class="header-titles">
+                    <h1>המשימות שלי</h1>
+                    <p>ארגון חכם של השבועיים הקרובים לשליטה מלאה בזמן שלך</p>
+                </div>
+                <button class="btn-start-week" id="startWeekBtn" onclick="startNewWeek()">
+                    התחל שבוע חדש ✨
+                </button>
+            </header>
+
+            <div class="week-section">
+                <h2 class="week-title">
+                    <span class="colorful-dot"></span> השבוע הנוכחי
+                </h2>
+                <div class="week-grid" id="week1Grid">
+                    <!-- ימי שבוע א ירונדרו כאן -->
+                </div>
+            </div>
+
+            <div class="week-section">
+                <h2 class="week-title">
+                    <span class="colorful-dot colorful-dot-next"></span> השבוע הבא
+                </h2>
+                <div class="week-grid" id="week2Grid">
+                    <!-- ימי שבוע ב ירונדרו כאן -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- מודל החלונית הקופצת לבחירת יום שיבוץ -->
+    <div class="modal" id="assignModal">
+        <div class="modal-content">
+            <h3>לאן לשבץ את המשימה?</h3>
+            <p id="modalTaskText" class="modal-task-text"></p>
+            <div class="modal-buttons" id="modalButtons">
+                <!-- הכפתורים ירונדרו פה דינמית -->
+            </div>
+            <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center;">
+                <button class="btn-delete-task" onclick="deleteAssignTask()">מחק משימה 🗑️</button>
+                <button class="btn-cancel" onclick="closeAssignModal()">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

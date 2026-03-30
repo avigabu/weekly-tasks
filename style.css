@@ -1,0 +1,495 @@
+/* Reset & Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-color: #F4F7FB;
+    --text-main: #2D3748;
+    --text-muted: #718096;
+    
+    /* Vivid Colors */
+    --vivid-blue: #4361EE;
+    --vivid-purple: #7209B7;
+    --vivid-pink: #F72585;
+    --accent-teal: #4CC9F0;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, var(--vivid-blue), var(--vivid-purple));
+    --gradient-secondary: linear-gradient(135deg, var(--vivid-purple), var(--vivid-pink));
+    
+    /* UI elements */
+    --card-bg: #FFFFFF;
+    --border-radius: 16px;
+    --shadow-soft: 0 10px 30px rgba(67, 97, 238, 0.08);
+    --shadow-hover: 0 15px 35px rgba(114, 9, 183, 0.15);
+}
+
+body {
+    font-family: 'Heebo', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    background-image: radial-gradient(circle at top right, rgba(76, 201, 240, 0.05), transparent 400px),
+                      radial-gradient(circle at bottom left, rgba(247, 37, 133, 0.05), transparent 400px);
+    background-attachment: fixed;
+}
+
+/* Layout */
+.app-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+/* Backlog Sidebar */
+.backlog-container {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 2rem;
+    height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+    border-right: 4px solid var(--vivid-pink);
+}
+
+.backlog-header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--vivid-purple);
+    margin-bottom: 0.5rem;
+}
+
+.backlog-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+/* Tasks & Forms */
+.add-task-form {
+    display: flex;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.add-task-form input {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: none;
+    background: #F8FAFC;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.add-task-form button {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 0 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: opacity 0.2s;
+}
+
+.add-task-form button:hover {
+    opacity: 0.9;
+}
+
+/* Lists */
+.task-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-right: 0.5rem;
+}
+
+/* Scrollbar for backlog */
+.task-list::-webkit-scrollbar { width: 6px; }
+.task-list::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
+    background-color: #F8FAFC;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    position: relative;
+}
+
+.task-item:hover {
+    background-color: white;
+    border-color: var(--vivid-blue);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.1);
+    transform: translateX(-4px); /* RTL slide right slightly */
+}
+
+/* Custom Checkbox */
+.task-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #A0AEC0;
+    border-radius: 6px;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.task-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    word-break: break-word;
+    flex: 1;
+}
+
+.task-item.completed .task-checkbox {
+    background: var(--gradient-secondary);
+    border-color: transparent;
+}
+
+.task-item.completed .task-checkbox::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    color: #A0AEC0;
+    opacity: 0.8;
+}
+
+/* Recurring Task Button */
+.btn-recurring {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0.3;
+    padding: 0 0.5rem;
+    margin-right: auto; /* Push to left in RTL */
+    transition: all 0.2s ease;
+    filter: grayscale(1);
+}
+
+.btn-recurring:hover {
+    opacity: 0.7;
+    filter: grayscale(0.5);
+    transform: scale(1.1);
+}
+
+.btn-recurring.active {
+    opacity: 1;
+    filter: grayscale(0);
+    text-shadow: 0 0 8px rgba(114, 9, 183, 0.4);
+}
+
+.task-item.recurring {
+    border-right: 3px solid var(--vivid-blue);
+}
+
+/* Backlog special item */
+.backlog-item {
+    border-right: 3px solid var(--vivid-pink);
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.btn-assign {
+    background: var(--vivid-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    transition: transform 0.2s, background 0.2s;
+    opacity: 0; /* Hidden by default */
+}
+
+.task-item:hover .btn-assign {
+    opacity: 1; /* Show on hover */
+}
+
+.btn-assign:hover {
+    background: var(--vivid-purple);
+    transform: scale(1.05);
+}
+
+/* Main Area */
+.weeks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.header-titles h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.3rem;
+}
+
+.header-titles p {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.btn-start-week {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btn-start-week:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.6);
+}
+
+/* Grid */
+.week-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.week-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.colorful-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--vivid-blue);
+}
+
+.colorful-dot.colorful-dot-next {
+    background: var(--vivid-pink);
+}
+
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Day Cards */
+.day-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 5px solid transparent;
+}
+
+.day-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Unique card borders based on child index */
+.day-card:nth-child(1) { border-top-color: #4361EE; }
+.day-card:nth-child(2) { border-top-color: #3A0CA3; }
+.day-card:nth-child(3) { border-top-color: #7209B7; }
+.day-card:nth-child(4) { border-top-color: #F72585; }
+.day-card:nth-child(5) { border-top-color: #4CC9F0; }
+.day-card:nth-child(6) { border-top-color: #F8961E; }
+.day-card:nth-child(7) { border-top-color: #43AA8B; }
+
+.day-header {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    color: #1A202C;
+}
+
+/* Modal */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    text-align: center;
+    animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    color: var(--vivid-purple);
+    margin-bottom: 0.5rem;
+}
+
+.modal-task-text {
+    font-size: 1.1rem;
+    color: var(--text-main);
+    margin-bottom: 2rem;
+    font-weight: 500;
+    background: #F8FAFC;
+    padding: 1rem;
+    border-radius: 8px;
+    border-right: 4px solid var(--vivid-blue);
+}
+
+.modal-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.modal-btn-day {
+    background: white;
+    border: 2px solid #E2E8F0;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-btn-day:hover {
+    border-color: var(--vivid-blue);
+    background: #F8FAFC;
+    color: var(--vivid-blue);
+}
+
+.btn-cancel {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    color: var(--vivid-pink);
+    text-decoration: underline;
+}
+
+.btn-delete-task {
+    background: rgba(247, 37, 133, 0.1);
+    border: 1px solid var(--vivid-pink);
+    color: var(--vivid-pink);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-delete-task:hover {
+    background: var(--vivid-pink);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+    .backlog-container {
+        position: relative;
+        top: 0;
+        height: 400px;
+        border-right: none;
+        border-top: 4px solid var(--vivid-pink);
+    }
+    .main-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-buttons {
+        grid-template-columns: 1fr;
+    }
+}
