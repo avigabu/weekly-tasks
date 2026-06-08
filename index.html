@@ -38,9 +38,14 @@
                     <h1>המשימות שלי</h1>
                     <p>ארגון חכם של השבועיים הקרובים לשליטה מלאה בזמן שלך</p>
                 </div>
-                <button class="btn-start-week" id="startWeekBtn" onclick="startNewWeek()">
-                    התחל שבוע חדש ✨
-                </button>
+                <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn-secondary-action" id="settingsBtn" onclick="openSettingsModal()">
+                        הגדרות ⚙️
+                    </button>
+                    <button class="btn-start-week" id="startWeekBtn" onclick="startNewWeek()">
+                        התחל שבוע חדש ✨
+                    </button>
+                </div>
             </header>
 
             <div class="week-section">
@@ -74,6 +79,24 @@
             <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center;">
                 <button class="btn-delete-task" onclick="deleteAssignTask()">מחק משימה 🗑️</button>
                 <button class="btn-cancel" onclick="closeAssignModal()">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- מודל הגדרות -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>הגדרות אפליקציה ⚙️</h3>
+            <div class="settings-group">
+                <label for="startOfWeekSelect">יום תחילת השבוע:</label>
+                <select id="startOfWeekSelect" class="settings-select">
+                    <option value="sunday">יום ראשון</option>
+                    <option value="monday">יום שני</option>
+                </select>
+            </div>
+            <div class="modal-actions" style="display: flex; justify-content: center; margin-top: 2rem;">
+                <button class="btn-start-week" onclick="saveSettings()" style="padding: 0.6rem 2rem; border-radius: 30px; box-shadow: none;">שמור</button>
+                <button class="btn-cancel" onclick="closeSettingsModal()" style="margin-right: 1.5rem;">ביטול</button>
             </div>
         </div>
     </div>

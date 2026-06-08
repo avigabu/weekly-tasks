@@ -4,7 +4,7 @@ const daysOfWeek = [
     { id: 'wednesday', name: 'יום רביעי' },
     { id: 'thursday', name: 'יום חמישי' },
     { id: 'friday', name: 'יום שישי' },
-    { id: 'saturday', name: 'שבת קודש' },
+    { id: 'saturday', name: 'יום שבת' },
     { id: 'sunday', name: 'יום ראשון' }
 ];
 
@@ -17,7 +17,10 @@ if (!appData) {
     appData = {
         week1: {},
         week2: {},
-        backlog: []
+        backlog: [],
+        settings: {
+            startOfWeek: 'monday'
+        }
     };
     
     // יצירת מערכים ריקים
@@ -41,7 +44,28 @@ if (!appData) {
     }
 }
 
-// שמירת נתונים
+if (!appData.settings) {
+    appData.settings = {
+        startOfWeek: 'monday'
+    };
+}
+
+function getOrderedDays() {
+    const startDay = appData.settings?.startOfWeek || 'monday';
+    const ordered = [];
+    
+    if (startDay === 'sunday') {
+        const sunday = daysOfWeek.find(d => d.id === 'sunday');
+        ordered.push(sunday);
+        daysOfWeek.forEach(d => {
+            if (d.id !== 'sunday') ordered.push(d);
+        });
+    } else {
+        daysOfWeek.forEach(d => ordered.push(d));
+    }
+    return ordered;
+}
+
 function saveData() {
     localStorage.setItem('weeklyTasksV2', JSON.stringify(appData));
 }
@@ -135,7 +159,7 @@ function renderWeekGrid(weekKey, gridId) {
     const grid = document.getElementById(gridId);
     grid.innerHTML = '';
     
-    daysOfWeek.forEach(day => {
+    getOrderedDays().forEach(day => {
         const card = document.createElement('div');
         card.className = 'day-card';
         
@@ -413,7 +437,7 @@ function openAssignModal(taskId, taskText) {
     week1Div.innerHTML = "בשבוע הנוכחי:";
     buttonsContainer.appendChild(week1Div);
     
-    daysOfWeek.forEach(day => {
+    getOrderedDays().forEach(day => {
         const btn = document.createElement('button');
         btn.className = 'modal-btn-day';
         btn.textContent = day.name;
@@ -430,7 +454,7 @@ function openAssignModal(taskId, taskText) {
     week2Div.innerHTML = "לאותו יום בשבוע הבא:";
     buttonsContainer.appendChild(week2Div);
     
-    daysOfWeek.forEach(day => {
+    getOrderedDays().forEach(day => {
         const btn = document.createElement('button');
         btn.className = 'modal-btn-day';
         btn.textContent = day.name;
@@ -548,4 +572,22 @@ function startNewWeek() {
     // שמירה ועדכון UI
     saveData();
     renderAll();
+}
+
+function openSettingsModal() {
+    const select = document.getElementById('startOfWeekSelect');
+    select.value = appData.settings?.startOfWeek || 'monday';
+    document.getElementById('settingsModal').classList.add('active');
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('active');
+}
+
+function saveSettings() {
+    const select = document.getElementById('startOfWeekSelect');
+    appData.settings.startOfWeek = select.value;
+    saveData();
+    renderAll();
+    closeSettingsModal();
 }

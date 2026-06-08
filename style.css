@@ -608,3 +608,56 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Settings Button & Layout */
+.btn-secondary-action {
+    background: white;
+    border: 2px solid var(--vivid-blue);
+    color: var(--vivid-blue);
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary-action:hover {
+    background: var(--vivid-blue);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+
+.settings-group {
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.settings-group label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.settings-select {
+    font-family: inherit;
+    font-size: 1.05rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: 2px solid #E2E8F0;
+    outline: none;
+    width: 200px;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    color: var(--text-main);
+    transition: border-color 0.2s;
+}
+
+.settings-select:focus {
+    border-color: var(--vivid-blue);
+}
