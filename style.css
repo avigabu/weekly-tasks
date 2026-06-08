@@ -210,68 +210,115 @@ body {
     border-color: var(--vivid-blue);
     box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
     cursor: default;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+    padding: 1rem;
 }
 
-.task-edit-input {
-    flex: 1;
+.task-item.editing .task-edit-input {
+    width: 100%;
+    margin-left: 0;
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 500;
-    padding: 0.2rem 0.5rem;
+    padding: 0.4rem 0.6rem;
     border: 1.5px solid var(--vivid-blue);
     border-radius: 6px;
     outline: none;
     background: white;
     color: var(--text-main);
-    margin-left: 0.5rem;
 }
 
-.edit-actions {
+.task-item.editing .edit-actions {
     display: flex;
-    align-items: center;
-    gap: 0.3rem;
+    justify-content: flex-end;
+    gap: 0.8rem;
 }
 
 .btn-edit-action {
     background: transparent;
-    border: none;
-    font-size: 1.1rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 1rem;
     cursor: pointer;
-    padding: 0 0.3rem;
-    transition: transform 0.2s, opacity 0.2s;
-    opacity: 0.8;
+    padding: 0.4rem 0.6rem;
+    transition: transform 0.2s, background-color 0.2s, color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-edit-action:hover {
-    opacity: 1;
-    transform: scale(1.15);
+    transform: scale(1.05);
 }
 
 .btn-edit-save {
+    background-color: rgba(67, 170, 139, 0.1);
+    border-color: #43AA8B;
     color: #43AA8B;
 }
 
+.btn-edit-save:hover {
+    background-color: #43AA8B;
+    color: white;
+}
+
 .btn-edit-delete {
+    background-color: rgba(247, 37, 133, 0.1);
+    border-color: var(--vivid-pink);
     color: var(--vivid-pink);
 }
 
+.btn-edit-delete:hover {
+    background-color: var(--vivid-pink);
+    color: white;
+}
+
 .btn-edit-recurring {
+    border-color: #E2E8F0;
     filter: grayscale(1);
     opacity: 0.4;
 }
 
 .btn-edit-recurring.active {
-    filter: grayscale(0);
+    background-color: rgba(248, 150, 30, 0.1);
+    border-color: #F8961E;
+    filter: none;
     opacity: 1;
-    text-shadow: 0 0 8px rgba(114, 9, 183, 0.4);
 }
 
 .btn-edit-cancel {
+    background-color: #F8FAFC;
+    border-color: #CBD5E0;
     color: var(--text-muted);
 }
 
+.btn-edit-cancel:hover {
+    background-color: #E2E8F0;
+}
+
+/* Recurring Task Indicator Badge (Not in Edit Mode) */
+.btn-recurring-indicator {
+    background: rgba(248, 150, 30, 0.1);
+    border: 1px solid #F8961E;
+    border-radius: 6px;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.btn-recurring-indicator:hover {
+    background: rgba(248, 150, 30, 0.2);
+    transform: scale(1.05);
+}
+
 @media (hover: none) {
-    .btn-edit-trigger, .btn-assign {
+    .btn-edit-trigger, .btn-assign, .btn-recurring-indicator {
         opacity: 0.7 !important;
     }
 }

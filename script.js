@@ -198,6 +198,19 @@ function renderWeekGrid(weekKey, gridId) {
             
             li.appendChild(checkbox);
             li.appendChild(txt);
+            
+            if (task.recurring) {
+                const btnRecurringIndicator = document.createElement('button');
+                btnRecurringIndicator.className = 'btn-recurring-indicator';
+                btnRecurringIndicator.innerHTML = '🔁';
+                btnRecurringIndicator.title = 'משימה קבועה - לחצי לביטול';
+                btnRecurringIndicator.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleRecurring(weekKey, day.id, task.id);
+                };
+                li.appendChild(btnRecurringIndicator);
+            }
+            
             li.appendChild(btnEdit);
             ul.appendChild(li);
         });
