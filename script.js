@@ -95,8 +95,12 @@ function renderBacklog() {
         const li = document.createElement('li');
         li.className = 'task-item backlog-item';
         
-        // לחיצה על המשימה עצמה תפתח את מסך השיבוץ (זה נוח)
-        li.onclick = () => openAssignModal(task.id, task.text);
+        li.onclick = (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || li.classList.contains('editing')) {
+                return;
+            }
+            openAssignModal(task.id, task.text);
+        };
         
         const txt = document.createElement('span');
         txt.className = 'task-text';
@@ -105,14 +109,23 @@ function renderBacklog() {
         const btn = document.createElement('button');
         btn.className = 'btn-assign';
         btn.textContent = 'שבץ משימה';
-        // מונע את פתיחת המודל פעמיים במקרה שלחיצה גם על ה-LI
         btn.onclick = (e) => {
             e.stopPropagation();
             openAssignModal(task.id, task.text);
         };
         
+        const btnEdit = document.createElement('button');
+        btnEdit.className = 'btn-edit-trigger';
+        btnEdit.innerHTML = '✏️';
+        btnEdit.title = 'עריכת משימה';
+        btnEdit.onclick = (e) => {
+            e.stopPropagation();
+            startInlineEdit(li, 'backlog', null, task);
+        };
+        
         li.appendChild(txt);
         li.appendChild(btn);
+        li.appendChild(btnEdit);
         
         list.appendChild(li);
     });
@@ -160,7 +173,12 @@ function renderWeekGrid(weekKey, gridId) {
             if (task.completed) li.classList.add('completed');
             if (task.recurring) li.classList.add('recurring');
             
-            li.onclick = () => toggleTask(weekKey, day.id, task.id);
+            li.onclick = (e) => {
+                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || li.classList.contains('editing')) {
+                    return;
+                }
+                toggleTask(weekKey, day.id, task.id);
+            };
             
             const checkbox = document.createElement('div');
             checkbox.className = 'task-checkbox';
@@ -169,18 +187,18 @@ function renderWeekGrid(weekKey, gridId) {
             txt.className = 'task-text';
             txt.textContent = task.text;
             
-            const btnRecurring = document.createElement('button');
-            btnRecurring.className = 'btn-recurring ' + (task.recurring ? 'active' : '');
-            btnRecurring.innerHTML = '🔁';
-            btnRecurring.title = 'הפוך למשימה קבועה בכל שבוע';
-            btnRecurring.onclick = (e) => {
+            const btnEdit = document.createElement('button');
+            btnEdit.className = 'btn-edit-trigger';
+            btnEdit.innerHTML = '✏️';
+            btnEdit.title = 'עריכת משימה';
+            btnEdit.onclick = (e) => {
                 e.stopPropagation();
-                toggleRecurring(weekKey, day.id, task.id);
+                startInlineEdit(li, weekKey, day.id, task);
             };
             
             li.appendChild(checkbox);
             li.appendChild(txt);
-            li.appendChild(btnRecurring);
+            li.appendChild(btnEdit);
             ul.appendChild(li);
         });
         
@@ -239,6 +257,124 @@ function toggleRecurring(weekKey, dayId, taskId) {
     
     saveData();
     renderAll();
+}
+
+function updateTaskText(weekKey, dayId, taskId, newText) {
+    const trimmedText = newText.trim();
+    if (!trimmedText) return;
+    
+    if (weekKey === 'backlog') {
+        const task = appData.backlog.find(t => t.id === taskId);
+        if (task) {
+            task.text = trimmedText;
+        }
+    } else {
+        const task = appData[weekKey][dayId].find(t => t.id === taskId);
+        if (task) {
+            const oldText = task.text;
+            task.text = trimmedText;
+            
+            if (task.recurring) {
+                const otherWeek = weekKey === 'week1' ? 'week2' : 'week1';
+                const counterpart = appData[otherWeek][dayId].find(t => t.recurring && t.text === oldText);
+                if (counterpart) {
+                    counterpart.text = trimmedText;
+                }
+            }
+        }
+    }
+    saveData();
+    renderAll();
+}
+
+function deleteTask(weekKey, dayId, taskId) {
+    if (!confirm("האם למחוק את המשימה הזו?")) return;
+    
+    if (weekKey === 'backlog') {
+        appData.backlog = appData.backlog.filter(t => t.id !== taskId);
+    } else {
+        const task = appData[weekKey][dayId].find(t => t.id === taskId);
+        if (task) {
+            if (task.recurring) {
+                const otherWeek = weekKey === 'week1' ? 'week2' : 'week1';
+                appData[otherWeek][dayId] = appData[otherWeek][dayId].filter(t => !(t.recurring && t.text === task.text));
+            }
+            appData[weekKey][dayId] = appData[weekKey][dayId].filter(t => t.id !== taskId);
+        }
+    }
+    saveData();
+    renderAll();
+}
+
+function startInlineEdit(li, weekKey, dayId, task) {
+    li.classList.add('editing');
+    li.innerHTML = '';
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'task-edit-input';
+    input.value = task.text;
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'edit-actions';
+    
+    const btnSave = document.createElement('button');
+    btnSave.className = 'btn-edit-action btn-edit-save';
+    btnSave.innerHTML = '✓';
+    btnSave.title = 'שמור שינויים';
+    btnSave.onclick = (e) => {
+        e.stopPropagation();
+        updateTaskText(weekKey, dayId, task.id, input.value);
+    };
+    
+    const btnDelete = document.createElement('button');
+    btnDelete.className = 'btn-edit-action btn-edit-delete';
+    btnDelete.innerHTML = '🗑️';
+    btnDelete.title = 'מחק משימה';
+    btnDelete.onclick = (e) => {
+        e.stopPropagation();
+        deleteTask(weekKey, dayId, task.id);
+    };
+    
+    actionsDiv.appendChild(btnSave);
+    actionsDiv.appendChild(btnDelete);
+    
+    if (weekKey !== 'backlog') {
+        const btnRecurring = document.createElement('button');
+        btnRecurring.className = 'btn-edit-action btn-edit-recurring' + (task.recurring ? ' active' : '');
+        btnRecurring.innerHTML = '🔁';
+        btnRecurring.title = task.recurring ? 'בטל משימה קבועה' : 'הפוך למשימה קבועה בכל שבוע';
+        btnRecurring.onclick = (e) => {
+            e.stopPropagation();
+            toggleRecurring(weekKey, dayId, task.id);
+        };
+        actionsDiv.appendChild(btnRecurring);
+    }
+    
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn-edit-action btn-edit-cancel';
+    btnCancel.innerHTML = '✕';
+    btnCancel.title = 'ביטול';
+    btnCancel.onclick = (e) => {
+        e.stopPropagation();
+        renderAll();
+    };
+    
+    actionsDiv.appendChild(btnCancel);
+    li.appendChild(input);
+    li.appendChild(actionsDiv);
+    
+    input.focus();
+    input.select();
+    
+    input.onclick = (e) => e.stopPropagation();
+    input.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+            updateTaskText(weekKey, dayId, task.id, input.value);
+        } else if (e.key === 'Escape') {
+            renderAll();
+        }
+    };
 }
 
 // ======================
